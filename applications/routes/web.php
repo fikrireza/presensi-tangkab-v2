@@ -191,6 +191,7 @@ Route::get('jadwal-kerja-group', 'JadwalKerjaController@jamGroup')->name('jadwal
 Route::get('jadwal-kerja-group/tambah', 'JadwalKerjaController@jamGroupAdd')->name('jadwal-kerja.tambahgroup');
 Route::post('jadwal-kerja-group/tambah', 'JadwalKerjaController@jamGroupPost')->name('jadwal-kerja.postgroup');
 Route::get('jadwal-kerja-group/lihat/{group_id}', 'JadwalKerjaController@jamGroupLihat')->name('jadwal-kerja.lihatgroup');
+Route::post('jadwal-kerja-group/lihat/', 'JadwalKerjaController@jamGroupUbah')->name('jadwal-kerja.editgroup');
 Route::get('jadwal-kerja-group/non/{id}', 'JadwalKerjaController@nonAktif')->name('jadwal-kerja.nonaktif');
 Route::get('jadwal-kerja-group/aktif/{id}', 'JadwalKerjaController@aktif')->name('jadwal-kerja.aktif');
 Route::get('jam-kerja', 'JadwalKerjaController@jamKerja')->name('jadwal-kerja.jam');

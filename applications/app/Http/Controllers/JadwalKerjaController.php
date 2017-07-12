@@ -119,11 +119,7 @@ class JadwalKerjaController extends Controller
     }
 
 
-    /**
-      * Start Jam Kerja
-      *
-      *
-    **/
+    /** START JAM KERJA **/
     public function jamKerja()
     {
       $getJamKerja = JamKerja::join('preson_pegawais', 'preson_pegawais.id', '=', 'preson_jam_kerja.actor')
@@ -254,14 +250,12 @@ class JadwalKerjaController extends Controller
 
       return redirect()->route('jadwal-kerja.jam')->with('berhasil', 'Berhasil Mengubah Jam Kerja');
     }
+    /** END JAM KERJA **/
 
+    /** START JAM KERJA GROUP **/
     public function jamGroup()
     {
-      $getJamGroup = JamKerjaGroup::join('preson_jam_kerja', 'preson_jam_kerja.id', '=', 'preson_jam_kerja_group.jam_kerja_id')
-                                  ->join('preson_pegawais', 'preson_pegawais.id', '=', 'preson_jam_kerja_group.actor')
-                                  ->select('preson_jam_kerja_group.*', 'preson_jam_kerja.nama_jam_kerja as nama_jam', 'preson_jam_kerja.jam_masuk as jam_masuk', 'preson_jam_kerja.jam_pulang as jam_pulang', 'preson_pegawais.nama as actor')
-                                  ->orderBy('preson_jam_kerja_group.nama_group')
-                                  ->get();
+      $getJamGroup = JamKerjaGroup::get();
 
       return view('pages.jadwalkerja.jamkerjagroup', compact('getJamGroup'));
     }
@@ -277,36 +271,36 @@ class JadwalKerjaController extends Controller
     {
       $message  = [
         'nama_group.required'  => 'Wajib di isi',
-        'jamKerja.*.jam_kerja_id.required' => 'Wajib di isi'
       ];
 
       $validator = Validator::make($request->all(), [
         'nama_group'  => 'required',
-        'jamKerja.*.jam_kerja_id' => 'required',
       ], $message);
 
       if($validator->fails()){
         return redirect()->route('jadwal-kerja.tambahgroup')->withErrors($validator)->withInput();
       }
 
-      if($request->group_id == null){
-        $group = JamKerjaGroup::select('group_id')->max('group_id');
+      $group = JamKerjaGroup::select('group_id')->max('group_id');
+      if($group == null){
         $group += 1;
       }else{
-        $group = $request->group_id;
+        $group += 1;
       }
 
       DB::transaction(function() use($request, $group) {
         $jamKerja = $request->input('jamKerja');
         if($jamKerja != ""){
           foreach($jamKerja as $jam){
-            $create = new JamKerjaGroup;
-            $create->nama_group   = $request->nama_group;
-            $create->group_id     = $group;
-            $create->jam_kerja_id = $jam['jam_kerja_id'];
-            $create->flag_status = 1;
-            $set->actor = Auth::user()->pegawai_id;
-            $create->save();
+            if($jam['jam_kerja_id'] != null){
+              $create = new JamKerjaGroup;
+              $create->nama_group   = $request->nama_group;
+              $create->group_id     = $group;
+              $create->jam_kerja_id = $jam['jam_kerja_id'];
+              $create->flag_status = 1;
+              $create->actor = Auth::user()->pegawai_id;
+              $create->save();
+            }
           }
         }
       });
@@ -316,10 +310,33 @@ class JadwalKerjaController extends Controller
 
     public function jamGroupLihat($group_id)
     {
+      $lihats = JamKerjaGroup::where('group_id', '=', $group_id)->get();
       $getJamKerja = JamKerja::get();
-      $lihat = JamKerjaGroup::where('group_id', '=', $group_id)->get();
 
-      return view('pages.jadwalkerja.jamkerjagroupLihat', compact('lihat', 'getJamKerja'));
+      return view('pages.jadwalkerja.jamkerjagroupLihat', compact('lihats', 'getJamKerja'));
+    }
+
+    public function jamGroupUbah(Request $request)
+    {
+
+      DB::transaction(function() use($request) {
+        $jamKerja = $request->input('jamKerja');
+        if($jamKerja != ""){
+          foreach($jamKerja as $jam){
+            if($jam['jam_kerja_id'] != null){
+              $create = new JamKerjaGroup;
+              $create->nama_group   = $request->nama_group;
+              $create->group_id     = $request->group_id;
+              $create->jam_kerja_id = $jam['jam_kerja_id'];
+              $create->flag_status = 1;
+              $create->actor = Auth::user()->pegawai_id;
+              $create->save();
+            }
+          }
+        }
+      });
+
+      return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Ditambah');
     }
 
     public function nonAktif($id)
@@ -341,4 +358,6 @@ class JadwalKerjaController extends Controller
 
       return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Diaktifkan');
     }
+    /** END JAM KERJA GROUP **/
+
 }

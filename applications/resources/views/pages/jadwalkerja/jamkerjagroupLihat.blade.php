@@ -66,65 +66,63 @@
         <h3 class="box-title" style="line-height:30px;">Group Jam Kerja</h3>
         <a href="{{ route('jadwal-kerja.group') }}" class="btn bg-blue pull-right">Kembali</a>
       </div>
-      <form class="form-horizontal" role="form" action="{{ route('jadwal-kerja.postgroup') }}" method="post">
+      <form class="form-horizontal" role="form" action="{{ route('jadwal-kerja.editgroup') }}" method="post">
         {{ csrf_field() }}
+        <input type="hidden" name="group_id" value="{{ $lihats[0]->id }}">
         <div class="box-body">
           <table class="table">
             <tr>
-              <td><input type="checkbox" name="chk" class="flat-purple" disabled=""/></td>
               <td><label class="control-label">Nama Group Jam Kerja</label>&nbsp;</td>
-              <td><input type="text" name="nama_group" class="form-control" value="{{ $lihat[0]->nama_group}}" readonly=""></td>
+              <td><input type="text" name="nama_group" class="form-control" value="{{ $lihats[0]->nama_group }}" readonly=""></td>
             </tr>
-            @foreach ($lihat as $lihats)
+            @php
+              $no = 1;
+              $count = $lihats->count();
+            @endphp
+            @foreach ($lihats as $pecah)
             <tr>
-              <td><input type="checkbox" name="chk" class="flat-purple" disabled=""/></td>
-              <td><label class="control-label">Jam Kerja</label>&nbsp;</td>
-              <td><select name="jam_kerja_id" class="form-control select2" disabled="">
-                <option value="--Pilih--">-- Pilih --</option>
-                @foreach ($getJamKerja as $key)
-                <option value="{{ $key->id }}" @if($lihats->jam_kerja_id == $key->id) selected="" @endif>{{ $key->nama_jam_kerja}} -> {{ $key->jam_masuk }} s/d {{$key->jam_pulang}}</option>
-                @endforeach
-              </select></td>
-              <td>@if ($lihats->flag_status == 1)
-              @if (session('status') == 'administrator' || session('status') == 'superuser')
-                <a href="" class="nonaktif" data-toggle="modal" data-target="#myModalNonAktif" data-value="{{ $lihats->id }}">NonAktif</a>
-              @endif
-              @else
-              @if (session('status') == 'administrator' || session('status') == 'superuser')
-                <a href="" class="aktif" data-toggle="modal" data-target="#myModalAktif" data-value="{{ $lihats->id }}">Aktifkan</a>
-              @endif
-              @endif</td>
+              <td><label class="control-label">Jam Kerja {{ $no }}</label>&nbsp;</td>
+              <td>
+                <select name="jam_kerja_id" class="form-control select2" disabled>
+                  <option value="--Pilih--">-- Pilih --</option>
+                  @foreach ($getJamKerja as $key)
+                  <option value="{{ $key->id }}" @if($pecah->jam_kerja_id == $key->id) selected="" @endif>{{ $key->nama_jam_kerja}} -> {{ $key->jam_masuk }} s/d {{$key->jam_pulang}}</option>
+                  @endforeach
+                </select>
+              </td>
+              <td>
+                @if ($pecah->flag_status == 1)
+                  @if (session('status') == 'administrator' || session('status') == 'superuser')
+                    <a href="" class="nonaktif" data-toggle="modal" data-target="#myModalNonAktif" data-value="{{ $pecah->id }}">NonAktif</a>
+                  @endif
+                  @else
+                  @if (session('status') == 'administrator' || session('status') == 'superuser')
+                    <a href="" class="aktif" data-toggle="modal" data-target="#myModalAktif" data-value="{{ $pecah->id }}">Aktifkan</a>
+                  @endif
+                @endif
+              </td>
             </tr>
+            @php
+              $no++;
+            @endphp
             @endforeach
-          </table>
-          <table class="table" id="JamKerja">
+
+            @for ($i=$count; $i < 5; $i++)
             <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td><input type="hidden" name="nama_group" class="form-control" value="{{ $lihat[0]->nama_group}}">
-              <input type="hidden" name="group_id" class="form-control" value="{{ $lihat[0]->group_id}}"></td>
+              <td><label class="control-label">Jam Kerja {{ $i+1 }}</label>&nbsp;</td>
+              <td>
+                <select name="jamKerja[][jam_kerja_id]" class="form-control select2">
+                  <option value="">-- Pilih --</option>
+                  @foreach ($getJamKerja as $key)
+                  <option value="{{ $key->id }}">{{ $key->nama_jam_kerja}} -> {{ $key->jam_masuk }} s/d {{$key->jam_pulang}}</option>
+                  @endforeach
+                </select>
+              </td>
             </tr>
-            <tr>
-              <td><input type="checkbox" name="chk" class="flat-purple"/></td>
-              <td><label class="control-label">Jam Kerja</label></td>
-              <td><select name="jamKerja[1][jam_kerja_id]" class="form-control select2" required="">
-                <option value="--Pilih--">-- Pilih --</option>
-                @foreach ($getJamKerja as $key)
-                <option value="{{ $key->id }}">{{ $key->nama_jam_kerja}} -> {{ $key->jam_masuk }} s/d {{$key->jam_pulang}}</option>
-                @endforeach
-              </select>
-              @if($errors->has('jamKerja[1][jam_kerja_id]'))
-              <span class="help-block">
-                <i>* {{$errors->first('jamKerja[1][jam_kerja_id]')}}</i>
-              </span>
-              @endif</td>
-            </tr>
+            @endfor
           </table>
         </div>
         <div class="box-footer clearfix">
-          <div class="col-md-6">
-            <label class="btn bg-green" onclick="addJamKerja('JamKerja')">Tambah Jam Kerja</label>&nbsp;<label class="btn bg-red" onclick="delJamKerja('JamKerja')">Hapus Jam Kerja</label>
-          </div>
           <div class="col-md-6">
             <button type="submit" class="btn bg-purple pull-right">Simpan</button>
           </div>
@@ -140,47 +138,6 @@
 <script src="{{ asset('plugins/iCheck/icheck.min.js') }}"></script>
 <script type="text/javascript">
 $(".select2").select2();
-$('input[type="checkbox"].flat-purple').iCheck({
-  checkboxClass: 'icheckbox_flat-purple'
-});
-
-var numA=1;
-  function addJamKerja(tableID) {
-      numA++;
-      var table = document.getElementById(tableID);
-      var rowCount = table.rows.length;
-      var row = table.insertRow(rowCount);
-      var cell1 = row.insertCell(0);
-      cell1.innerHTML = '<input type="checkbox" name="chk" class="flat-purple"/>';
-      var cell2 = row.insertCell(1);
-      cell2.innerHTML = '<label class="control-label">Jam Kerja</label>';
-      var cell3 = row.insertCell(2);
-      cell3.innerHTML = '<select name="jamKerja['+numA+'][jam_kerja_id]" class="form-control select2" required=""><option value="--Pilih--">--Pilih --</option>@foreach ($getJamKerja as $key)<option value="{{ $key->id }}">{{ $key->nama_jam_kerja}} -> {{ $key->jam_masuk }} s/d {{$key->jam_pulang}}</option>@endforeach</select>@if($errors->has("jamKerja['+numA+'][jam_kerja_id]"))<span class="help-block"><i>* {{$errors->first("jamKerja['+numA+'][jam_kerja_id]")}}</i></span>@endif';
-      $(".select2").select2();
-      $('input[type="checkbox"].flat-purple').iCheck({
-        checkboxClass: 'icheckbox_flat-purple'
-      });
-  }
-
-  function delJamKerja(tableID) {
-      try {
-      var table = document.getElementById(tableID);
-      var rowCount = table.rows.length;
-      for(var i=0; i<rowCount; i++) {
-          var row = table.rows[i];
-          var chkbox = row.cells[0].childNodes[0];
-          if(null != chkbox && true == chkbox.checked) {
-              table.deleteRow(i);
-              rowCount--;
-              i--;
-              numA--;
-          }
-      }
-      }catch(e) {
-          alert(e);
-      }
-  }
-
 
 $('a.nonaktif').click(function(){
   var a = $(this).data('value');

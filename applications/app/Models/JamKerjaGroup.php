@@ -12,6 +12,6 @@ class JamKerjaGroup extends Model
 
     public function jamKerja()
     {
-      return $this->belongsTo('App\Models\JamKerja', 'id');
+      return $this->belongsTo('App\Models\JamKerja', 'jam_kerja_id');
     }
 }

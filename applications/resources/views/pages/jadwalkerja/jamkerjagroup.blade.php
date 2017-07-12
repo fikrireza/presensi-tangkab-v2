@@ -81,7 +81,7 @@
         <a href="{{ route('jadwal-kerja.jam') }}" class="btn bg-green pull-right">Lihat Jam Kerja</a>
       </div>
       <div class="box-body table-responsive">
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped" id="table_jadwal_kerja">
           <thead>
             <tr>
               <th>No</th>
@@ -109,8 +109,8 @@
             <tr>
               <td>{{ $no }}</td>
               <td><a href="{{ url('jadwal-kerja-group/lihat')."/". $key->group_id }}">{{ $key->nama_group }}</a></td>
-              <td>{{ $key->nama_jam }}</td>
-              <td>{{ $key->jam_masuk }} s/d {{ $key->jam_pulang }}</td>
+              <td>{{ $key->jamKerja->nama_jam_kerja }}</td>
+              <td>{{ $key->jamKerja->jam_masuk }} s/d {{ $key->jamKerja->jam_pulang }}</td>
               @if (session('status') == 'superuser')
               <td>{{ $key->actor }}</td>
               @endif
@@ -120,7 +120,7 @@
               @endif
               @else
               @if (session('status') == 'administrator' || session('status') == 'superuser')
-                <a href="" class="btn btn-xs btn-primary aktif" data-toggle="modal" data-target="#myModalAktif" data-value="{{ $key->id }}">Aktifkan</a>
+                <a href="" class="btn btn-xs btn-primary aktif" data-toggle="modal" data-target="#myModalAktif" data-value="{{ $key->id }}">Aktif</a>
               @endif
               @endif</td>
             </tr>
