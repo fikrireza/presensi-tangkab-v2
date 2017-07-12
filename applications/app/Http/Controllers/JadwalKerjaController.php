@@ -118,6 +118,12 @@ class JadwalKerjaController extends Controller
       return redirect()->route('jadwal-kerja')->with('berhasil', 'Berhasil Mengubah Jadwal Kerja');
     }
 
+
+    /**
+      * Start Jam Kerja
+      *
+      *
+    **/
     public function jamKerja()
     {
       $getJamKerja = JamKerja::join('preson_pegawais', 'preson_pegawais.id', '=', 'preson_jam_kerja.actor')
@@ -163,6 +169,12 @@ class JadwalKerjaController extends Controller
         return redirect()->route('jadwal-kerja.tambahjam')->withErrors($validator)->withInput();
       }
 
+      if($request->flag_besok == "on"){
+        $flag_besok = 1;
+      }else{
+        $flag_besok = 0;
+      }
+
       $set = new JamKerja;
       $set->nama_jam_kerja = $request->nama_jam_kerja;
       $set->jam_masuk = $request->jam_masuk;
@@ -173,6 +185,7 @@ class JadwalKerjaController extends Controller
       $set->jam_pulang_akhir = $request->jam_pulang_akhir;
       $set->toleransi_pulcep = $request->toleransi_pulcep;
       $set->toleransi_terlambat = $request->toleransi_terlambat;
+      $set->flag_besok = $flag_besok;
       $set->flag_status = 1;
       $set->actor = Auth::user()->pegawai_id;
       $set->save();
@@ -218,6 +231,12 @@ class JadwalKerjaController extends Controller
         return redirect()->route('jadwal-kerja.ubahjam', ['id' => $request->id])->withErrors($validator)->withInput();
       }
 
+      if($request->flag_besok == "on"){
+        $flag_besok = 1;
+      }else{
+        $flag_besok = 0;
+      }
+
       $set = JamKerja::find($request->id);
       $set->nama_jam_kerja = $request->nama_jam_kerja;
       $set->jam_masuk = $request->jam_masuk;
@@ -226,6 +245,7 @@ class JadwalKerjaController extends Controller
       $set->jam_pulang = $request->jam_pulang;
       $set->jam_pulang_awal = $request->jam_pulang_awal;
       $set->jam_pulang_akhir = $request->jam_pulang_akhir;
+      $set->flag_besok = $flag_besok;
       $set->toleransi_pulcep = $request->toleransi_pulcep;
       $set->toleransi_terlambat = $request->toleransi_terlambat;
       $set->flag_status = 1;

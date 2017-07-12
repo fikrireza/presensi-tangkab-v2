@@ -54,6 +54,7 @@
               <th>Jam Pulang</th>
               <th>Jam Pulang Awal</th>
               <th>Jam Pulang Akhir</th>
+              <th>Tanggal Berikutnya</th>
               <th>Toleransi Terlambat (min)</th>
               <th>Toleransi Pulcep (min)</th>
               @if (session('status') == 'superuser')
@@ -62,22 +63,6 @@
               <th>Aksi</th>
             </tr>
           </thead>
-          <tfoot>
-            <tr>
-              <td></td>
-              <th></th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tfoot>
           <tbody>
             <?php $no = 1; ?>
             @foreach ($getJamKerja as $key)
@@ -90,6 +75,7 @@
               <td>{{ $key->jam_pulang }}</td>
               <td>{{ $key->jam_pulang_awal }}</td>
               <td>{{ $key->jam_pulang_akhir }}</td>
+              <td>{{ $key->flag_besok == 1 ? 'Ya' : '-' }}</td>
               <td>{{ $key->toleransi_terlambat }}</td>
               <td>{{ $key->toleransi_pulcep }}</td>
               @if (session('status') == 'superuser')
