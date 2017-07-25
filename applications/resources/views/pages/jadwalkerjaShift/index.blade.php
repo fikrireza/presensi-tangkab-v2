@@ -1,15 +1,14 @@
 @extends('layout.master')
 
 @section('title')
-  <title>Group Kerja</title>
+  <title>Group Shift | Presensi Online</title>
 @endsection
 
 @section('breadcrumb')
-  <h1>Group Kerja</h1>
+  <h1>Group Shift</h1>
   <ol class="breadcrumb">
     <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
-    <li><a href="{{ route('jadwal-kerja') }}">Jadwal Jam Kerja</a></li>
-    <li class="active">Group Jam Kerja</li>
+    <li class="active">Group Shift</li>
   </ol>
 @endsection
 
@@ -40,10 +39,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Non Aktif Group Kerja?</h4>
+        <h4 class="modal-title">Non Aktif Group Shift?</h4>
       </div>
       <div class="modal-body">
-        <p>Apakah anda yakin untuk me-non Aktifkan Group Kerja ini?</p>
+        <p>Apakah anda yakin untuk me-non Aktifkan Group Shift ini?</p>
       </div>
       <div class="modal-footer">
         <button type="reset" class="btn btn-default pull-left btn-flat" data-dismiss="modal">Tidak</button>
@@ -59,10 +58,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Aktifkan Group Kerja?</h4>
+        <h4 class="modal-title">Aktifkan Group Shift?</h4>
       </div>
       <div class="modal-body">
-        <p>Apakah anda yakin untuk Aktifkan Group Kerja ini?</p>
+        <p>Apakah anda yakin untuk Aktifkan Group Shift ini?</p>
       </div>
       <div class="modal-footer">
         <button type="reset" class="btn btn-default pull-left btn-flat" data-dismiss="modal">Tidak</button>
@@ -76,18 +75,20 @@
   <div class="col-md-12">
     <div class="box box-primary box-solid">
       <div class="box-header">
-        <h3 class="box-title">Group Kerja</h3>
-        <a href="{{ route('jadwal-kerja.tambahgroup') }}" class="btn bg-blue pull-right">Tambah Group Kerja</a>
-        <a href="{{ route('jadwal-kerja.jam') }}" class="btn bg-green pull-right">Lihat Jam Kerja</a>
+        <h3 class="box-title">Group Shift</h3>
+        <a href="{{ route('jamkerjaShift.tambah') }}" class="btn bg-blue pull-right">Tambah Group Shift</a>
       </div>
       <div class="box-body table-responsive">
         <table class="table table-bordered table-striped" id="table_jadwal_kerja">
           <thead>
             <tr>
               <th>No</th>
-              <th>Nama Group Kerja</th>
-              <th>Nama Jadwal Kerja</th>
-              <th>Jadwal Kerja</th>
+              <th>Nama Group Shift</th>
+              <th>Jadwal 1</th>
+              <th>Jadwal 2</th>
+              <th>Jadwal 3</th>
+              <th>Jadwal 4</th>
+              <th>Jadwal 5</th>
               @if (session('status') == 'superuser')
               <th>Aktor</th>
               @endif
@@ -101,6 +102,9 @@
               <th></th>
               <td></td>
               <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
             </tr>
           </tfoot>
           <tbody>
@@ -108,19 +112,22 @@
             @foreach ($getJamGroup as $key)
             <tr>
               <td>{{ $no }}</td>
-              <td><a href="{{ url('jadwal-kerja-group/lihat')."/". $key->group_id }}">{{ $key->nama_group }}</a></td>
-              <td>{{ $key->jamKerja->nama_jam_kerja }}</td>
-              <td>{{ $key->jamKerja->jam_masuk }} s/d {{ $key->jamKerja->jam_pulang }}</td>
+              <td>{{ $key->nama_group }}</td>
+              <td>{{ $key->jadwal1 ? $key->jadwal_1->jam_masuk .' s/d '. $key->jadwal_1->jam_pulang : '-'}}</td>
+              <td>{{ $key->jadwal2 ? $key->jadwal_2->jam_masuk .' s/d '. $key->jadwal_2->jam_pulang : '-'}}</td>
+              <td>{{ $key->jadwal3 ? $key->jadwal_3->jam_masuk .' s/d '. $key->jadwal_3->jam_pulang : '-'}}</td>
+              <td>{{ $key->jadwal4 ? $key->jadwal_4->jam_masuk .' s/d '. $key->jadwal_4->jam_pulang : '-'}}</td>
+              <td>{{ $key->jadwal5 ? $key->jadwal_5->jam_masuk .' s/d '. $key->jadwal_5->jam_pulang : '-'}}</td>
               @if (session('status') == 'superuser')
               <td>{{ $key->actor }}</td>
               @endif
-              <td>@if ($key->flag_status == 1)
+              <td><a class="btn btn-xs btn-warning" href="{{ route('jamkerjaShift.lihat', ['id' => $key->id]) }}"><i class="fa fa-edit"></i> Ubah</a>@if ($key->flag_status == 1)
               @if (session('status') == 'administrator' || session('status') == 'superuser')
                 <a href="" class="btn btn-xs btn-danger nonaktif" data-toggle="modal" data-target="#myModalNonAktif" data-value="{{ $key->id }}">NonAktif</a>
               @endif
               @else
               @if (session('status') == 'administrator' || session('status') == 'superuser')
-                <a href="" class="btn btn-xs btn-primary aktif" data-toggle="modal" data-target="#myModalAktif" data-value="{{ $key->id }}">Aktif</a>
+                <a href="" class="btn btn-xs btn-primary aktif" data-toggle="modal" data-target="#myModalAktif" data-value="{{ $key->id }}">Aktifkan</a>
               @endif
               @endif</td>
             </tr>
@@ -128,7 +135,6 @@
             @endforeach
           </tbody>
         </table>
-        <p><span class="help-block">*Klik Nama Group Untuk Menambah Jam Kerja</span></p>
       </div>
     </div>
   </div>
@@ -145,11 +151,11 @@ $(function () {
 
 $('a.nonaktif').click(function(){
   var a = $(this).data('value');
-  $('#setnonaktif').attr('href', "{{ url('/') }}/jadwal-kerja-group/non/"+a);
+  $('#setnonaktif').attr('href', "{{ url('/') }}/jadwal-shift-group/non/"+a);
 });
 $('a.aktif').click(function(){
   var a = $(this).data('value');
-  $('#setaktif').attr('href', "{{ url('/') }}/jadwal-kerja-group/aktif/"+a);
+  $('#setaktif').attr('href', "{{ url('/') }}/jadwal-shift-group/aktif/"+a);
 });
 </script>
 @endsection

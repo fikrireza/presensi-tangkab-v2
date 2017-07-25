@@ -181,19 +181,13 @@ Route::post('laporan-pegawai', 'LaporanController@laporanPegawaiStore')->name('l
 Route::get('cetakPegawai', 'LaporanController@cetakPegawai')->name('laporan.cetakPegawai');
 
 
-// Jam Kerja & Jem Kerja Group & Jadwal Kerja
+// Jadwal Kerja
 Route::get('jadwal-kerja', 'JadwalKerjaController@index')->name('jadwal-kerja');
 Route::get('jadwal-kerja/tambah', 'JadwalKerjaController@jadwalTambah')->name('jadwal-kerja.tambah');
 Route::post('jadwal-kerja/tambah', 'JadwalKerjaController@jadwalPost')->name('jadwal-kerja.post');
 Route::get('jadwal-kerja/ubah/{id}', 'JadwalKerjaController@jadwalUbah')->name('jadwal-kerja.ubah');
 Route::post('jadwal-kerja/ubah', 'JadwalKerjaController@jadwalEdit')->name('jadwal-kerja.edit');
-Route::get('jadwal-kerja-group', 'JadwalKerjaController@jamGroup')->name('jadwal-kerja.group');
-Route::get('jadwal-kerja-group/tambah', 'JadwalKerjaController@jamGroupAdd')->name('jadwal-kerja.tambahgroup');
-Route::post('jadwal-kerja-group/tambah', 'JadwalKerjaController@jamGroupPost')->name('jadwal-kerja.postgroup');
-Route::get('jadwal-kerja-group/lihat/{group_id}', 'JadwalKerjaController@jamGroupLihat')->name('jadwal-kerja.lihatgroup');
-Route::post('jadwal-kerja-group/lihat/', 'JadwalKerjaController@jamGroupUbah')->name('jadwal-kerja.editgroup');
-Route::get('jadwal-kerja-group/non/{id}', 'JadwalKerjaController@nonAktif')->name('jadwal-kerja.nonaktif');
-Route::get('jadwal-kerja-group/aktif/{id}', 'JadwalKerjaController@aktif')->name('jadwal-kerja.aktif');
+
 
 // Jam Kerja
 Route::get('jam-kerja', 'JamKerjaController@jamKerja')->name('jadwal-kerja.jam');
@@ -202,6 +196,14 @@ Route::post('jam-kerja/tambah', 'JamKerjaController@jamKerjaPost')->name('jadwal
 Route::get('jam-kerja/ubah/{id}', 'JamKerjaController@jamKerjaUbah')->name('jadwal-kerja.ubahjam');
 Route::get('jam-kerja/ubah', 'JamKerjaController@jamKerjaEdit')->name('jadwal-kerja.editjam');
 
+// Jam Shift Group
+Route::get('jadwal-shift-group', 'JamKerjaShiftController@index')->name('jamkerjaShift.index');
+Route::get('jadwal-shift-group/tambah', 'JamKerjaShiftController@tambah')->name('jamkerjaShift.tambah');
+Route::post('jadwal-shift-group/tambah', 'JamKerjaShiftController@store')->name('jamkerjaShift.store');
+Route::get('jadwal-shift-group/lihat/{id}', 'JamKerjaShiftController@lihat')->name('jamkerjaShift.lihat');
+Route::post('jadwal-shift-group/lihat/', 'JamKerjaShiftController@edit')->name('jamkerjaShift.edit');
+Route::get('jadwal-shift-group/non/{id}', 'JamKerjaShiftController@nonAktif')->name('jamkerjaShift.nonaktif');
+Route::get('jadwal-shift-group/aktif/{id}', 'JamKerjaShiftController@aktif')->name('jamkerjaShift.aktif');
 
 // Shift
 Route::get('shift', 'ShiftController@index')->name('shift.index');
@@ -212,6 +214,8 @@ Route::get('jadwal-shift/{tanggal}', 'ShiftController@jadwalShiftTanggal')->name
 Route::post('jadwal-shift/tambah', 'ShiftController@jadwalShiftTanggalStore')->name('shift.jadwaltanggalStore');
 Route::get('jadwal-shift/ubah/{id}', 'ShiftController@jadwalShiftUbah')->name('shift.jadwalUbah');
 Route::post('jadwal-shift/ubah', 'ShiftController@jadwalShiftEdit')->name('shift.jadwalEdit');
+
+
 
 
 

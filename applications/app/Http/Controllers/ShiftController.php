@@ -177,4 +177,5 @@ class ShiftController extends Controller
 
       return redirect()->route('shift.jadwaltanggal', ['tanggal' => $tanggal])->with('berhasil', 'Jadwal Pegawai '.$request->nama_pegawai.' Berhasil Dirubah');
     }
+    
 }

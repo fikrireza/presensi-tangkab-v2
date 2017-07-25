@@ -41,13 +41,16 @@
             </li>
             @endif
             @if (session('status') == 'administrator' || session('status') == 'superuser')
-            <li class="treeview {{ Route::currentRouteNamed('shift.index') ? 'active' : ''}}">
+            <li class="treeview {{ Route::currentRouteNamed('shift.index') ? 'active' : ''}}{{ Route::is('jamkerjaShift*') ? 'active' : ''}}">
               <a href="#">
                 <i class="fa fa-calendar-plus-o"></i> <span>Manajemen Shift</span>
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
                 <li class="{{ Route::currentRouteNamed('shift.index') ? 'active' : ''}}"><a href="{{ route('shift.index')}}"><i class="fa fa-circle-o"></i> Daftar SKPD</a></li>
+              </ul>
+              <ul class="treeview-menu">
+                <li class="{{ Route::is('jamkerjaShift*') ? 'active' : ''}}"><a href="{{ route('jamkerjaShift.index')}}"><i class="fa fa-circle-o"></i> Jam Shift Group</a></li>
               </ul>
             </li>
             @elseif(session('status') == 'admin' && (Auth::user()->skpd->flag_shift == 1))
@@ -58,6 +61,9 @@
               </a>
               <ul class="treeview-menu">
                 <li class="{{ Route::currentRouteNamed('shift.jadwal') ? 'active' : ''}}{{ Route::currentRouteNamed('shift.jadwalBulan') ? 'active' : ''}}{{ Route::currentRouteNamed('shift.jadwaltanggal') ? 'active' : ''}}"><a href="{{ route('shift.jadwal') }}"><i class="fa fa-circle-o"></i> Jadwal Shift</a></li>
+              </ul>
+              <ul class="treeview-menu">
+                <li class="{{ Route::is('jamkerjaShift*') ? 'active' : ''}}"><a href="{{ route('jamkerjaShift.index')}}"><i class="fa fa-circle-o"></i> Jam Shift Group</a></li>
               </ul>
             </li>
             @endif
