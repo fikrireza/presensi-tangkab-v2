@@ -14,4 +14,5 @@ class Skpd extends Model
   	{
   	  return $this->hasMany('App\Models\User');
   	}
+
 }

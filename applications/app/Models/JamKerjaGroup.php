@@ -14,4 +14,9 @@ class JamKerjaGroup extends Model
     {
       return $this->belongsTo('App\Models\JamKerja', 'jam_kerja_id');
     }
+
+    public function jadwalkerja()
+    {
+      return $this->hasMany('App\Models\JadwalKerja', 'group_id');
+    }
 }

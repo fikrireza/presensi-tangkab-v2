@@ -9,7 +9,7 @@
   <ol class="breadcrumb">
     <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
     <li><a href="{{ route('jadwal-kerja') }}">Jadwal Jam Kerja</a></li>
-    <li><a href="{{ route('jadwal-kerja.group') }}">Group Jam Kerja</a></li>
+    {{-- <li><a href="{{ route('jadwal-kerja.group') }}">Group Jam Kerja</a></li> --}}
     <li class="active">Jam Kerja</li>
   </ol>
 @endsection

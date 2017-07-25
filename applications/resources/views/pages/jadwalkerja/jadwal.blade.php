@@ -39,7 +39,7 @@
       <div class="box-header">
         <h3 class="box-title">Jadwal Kerja</h3>
         <a href="{{ route('jadwal-kerja.tambah') }}" class="btn bg-blue pull-right">Tambah Jadwal Kerja</a>
-        <a href="{{ route('jadwal-kerja.group') }}" class="btn bg-green pull-right">Lihat Group Jam Kerja</a>
+        <a href="{{ route('jadwal-kerja.jam') }}" class="btn bg-green pull-right">Lihat Jam Kerja</a>
       </div>
       <div class="box-body table-responsive">
         <table id="table_jadwal_kerja" class="table table-bordered table-striped">
@@ -49,7 +49,13 @@
               <th>SKPD</th>
               <th>Periode Awal</th>
               <th>Periode Akhir</th>
-              <th>Jam Kerja Group</th>
+              <th>Senin</th>
+              <th>Selasa</th>
+              <th>Rabu</th>
+              <th>Kamis</th>
+              <th>Jumat</th>
+              <th>Sabtu</th>
+              <th>Minggu</th>
               @if (session('status') == 'superuser')
               <th>Aktor</th>
               @endif
@@ -60,6 +66,12 @@
             <tr>
               <td></td>
               <th></th>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
               <td></td>
               <td></td>
               <td></td>
@@ -74,10 +86,16 @@
             @foreach ($getSKPD as $key)
             <tr>
               <td>{{ $no }}</td>
-              <td>{{ $key->skpd }}</td>
+              <td>{{ $key->skpd->nama }}</td>
               <td>{{ $key->periode_awal }}</td>
               <td>{{ $key->periode_akhir }}</td>
-              <td>{{ $key->jam_kerja_group }}</td>
+              <td>{{ $key->jadwal_1 ? $key->jamKerjaJadwal_1->jam_masuk .' s/d '. $key->jamKerjaJadwal_1->jam_pulang : '-' }}</td>
+              <td>{{ $key->jadwal_2 ? $key->jamKerjaJadwal_2->jam_masuk .' s/d '. $key->jamKerjaJadwal_2->jam_pulang : '-' }}</td>
+              <td>{{ $key->jadwal_3 ? $key->jamKerjaJadwal_3->jam_masuk .' s/d '. $key->jamKerjaJadwal_3->jam_pulang : '-' }}</td>
+              <td>{{ $key->jadwal_4 ? $key->jamKerjaJadwal_4->jam_masuk .' s/d '. $key->jamKerjaJadwal_4->jam_pulang : '-' }}</td>
+              <td>{{ $key->jadwal_5 ? $key->jamKerjaJadwal_5->jam_masuk .' s/d '. $key->jamKerjaJadwal_5->jam_pulang : '-' }}</td>
+              <td>{{ $key->jadwal_6 ? $key->jamKerjaJadwal_6->jam_masuk .' s/d '. $key->jamKerjaJadwal_6->jam_pulang : '-' }}</td>
+              <td>{{ $key->jadwal_7 ? $key->jamKerjaJadwal_7->jam_masuk .' s/d '. $key->jamKerjaJadwal_7->jam_pulang : '-' }}</td>
               @if (session('status') == 'superuser')
               <td>{{ $key->actor }}</td>
               @endif

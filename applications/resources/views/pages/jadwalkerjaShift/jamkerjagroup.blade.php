@@ -86,7 +86,7 @@
             <tr>
               <th>No</th>
               <th>Nama Group Kerja</th>
-              <th>Nama Jam Kerja</th>
+              <th>Nama Jadwal Kerja</th>
               <th>Jadwal Kerja</th>
               @if (session('status') == 'superuser')
               <th>Aktor</th>

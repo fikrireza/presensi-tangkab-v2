@@ -64,13 +64,79 @@
               </div>
             </div>
           </div>
-          <div class="form-group {{ $errors->has('jam_kerja_group') ? 'has-error' : '' }}">
-            <label class="col-sm-3 control-label">Jam Kerja Group</label>
+          <div class="form-group {{ $errors->has('senin') ? 'has-error' : '' }}">
+            <label class="col-sm-3 control-label">Senin</label>
             <div class="col-sm-8">
-              <select  name="jam_kerja_group" class="form-control select2" required="">
-                <option value="">--Pilih--</option>
-                @foreach ($kerjaGroup as $key)
-                <option value="{{$key->group_id}}" @if ($key->group_id == $getJadwal->jam_kerja_group) selected="" @endif>{{$key->nama_group}}</option>
+              <select name="senin" class="form-control pilihHari">
+                <option value=""></option>
+                @foreach ($jamKerja as $key)
+                <option value="{{$key->id}}" {{ $key->id == $getJadwal->jadwal_1 ? 'selected=""' : ''}}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group {{ $errors->has('selasa') ? 'has-error' : '' }}">
+            <label class="col-sm-3 control-label">Selasa</label>
+            <div class="col-sm-8">
+              <select name="selasa" class="form-control pilihHari">
+                <option value=""></option>
+                @foreach ($jamKerja as $key)
+                <option value="{{$key->id}}" {{ $key->id == $getJadwal->jadwal_2 ? 'selected=""' : ''}}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group {{ $errors->has('rabu') ? 'has-error' : '' }}">
+            <label class="col-sm-3 control-label">Rabu</label>
+            <div class="col-sm-8">
+              <select name="rabu" class="form-control pilihHari">
+                <option value=""></option>
+                @foreach ($jamKerja as $key)
+                <option value="{{$key->id}}" {{ $key->id == $getJadwal->jadwal_3 ? 'selected=""' : ''}}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group {{ $errors->has('kamis') ? 'has-error' : '' }}">
+            <label class="col-sm-3 control-label">Kamis</label>
+            <div class="col-sm-8">
+              <select name="kamis" class="form-control pilihHari">
+                <option value=""></option>
+                @foreach ($jamKerja as $key)
+                <option value="{{$key->id}}" {{ $key->id == $getJadwal->jadwal_4 ? 'selected=""' : ''}}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group {{ $errors->has('jumat') ? 'has-error' : '' }}">
+            <label class="col-sm-3 control-label">Jum'at</label>
+            <div class="col-sm-8">
+              <select name="jumat" class="form-control pilihHari">
+                <option value=""></option>
+                @foreach ($jamKerja as $key)
+                <option value="{{$key->id}}" {{ $key->id == $getJadwal->jadwal_5 ? 'selected=""' : ''}}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group {{ $errors->has('sabtu') ? 'has-error' : '' }}">
+            <label class="col-sm-3 control-label">Sabtu</label>
+            <div class="col-sm-8">
+              <select name="sabtu" class="form-control pilihHari">
+                <option value=""></option>
+                @foreach ($jamKerja as $key)
+                <option value="{{$key->id}}" {{ $key->id == $getJadwal->jadwal_6 ? 'selected=""' : ''}}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group {{ $errors->has('minggu') ? 'has-error' : '' }}">
+            <label class="col-sm-3 control-label">Minggu</label>
+            <div class="col-sm-8">
+              <select name="minggu" class="form-control pilihHari">
+                <option value=""></option>
+                @foreach ($jamKerja as $key)
+                <option value="{{$key->id}}" {{ $key->id == $getJadwal->jadwal_7 ? 'selected=""' : ''}}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
                 @endforeach
               </select>
             </div>
@@ -99,6 +165,14 @@
 <script src="{{ asset('plugins/iCheck/icheck.min.js') }}"></script>
 <script type="text/javascript">
 $(".select2").select2();
+$(".pilihHari").select2({
+  placeholder: "|| --Pilih-- ",
+  allowClear: true,
+  escapeMarkup : function(text){
+    text = text.split("||");
+    return '<span class="pull-right">'+text[0]+'</span><b>'+text[1]+'</b>';
+  }
+});
 $('#periode_awal').datepicker({
   autoclose: true,
   format: 'yyyy-mm-dd',

@@ -23,12 +23,10 @@ class JadwalKerjaController extends Controller
       $this->middleware('auth');
     }
 
+    /** START JADWAL KERJA **/
     public function index()
     {
-      $getSKPD = JadwalKerja::join('preson_skpd', 'preson_skpd.id', '=', 'preson_jadwal_kerja.skpd_id')
-                            ->join('preson_pegawais', 'preson_pegawais.id', '=', 'preson_jadwal_kerja.actor')
-                            ->select('preson_jadwal_kerja.*', 'preson_skpd.nama as skpd', 'preson_pegawais.nama as actor')
-                            ->get();
+      $getSKPD = JadwalKerja::get();
 
       return view('pages.jadwalkerja.jadwal', compact('getSKPD'));
     }
@@ -36,9 +34,9 @@ class JadwalKerjaController extends Controller
     public function jadwalTambah()
     {
       $getSKPD = Skpd::get();
-      $kerjaGroup = JamKerjaGroup::groupBy('group_id')->orderBy('nama_group', 'asc')->get();
+      $jamKerja = JamKerja::get();
 
-      return view('pages.jadwalkerja.jadwalTambah', compact('getSKPD', 'kerjaGroup'));
+      return view('pages.jadwalkerja.jadwalTambah', compact('getSKPD', 'jamKerja'));
     }
 
     public function jadwalPost(Request $request)
@@ -47,14 +45,12 @@ class JadwalKerjaController extends Controller
         'skpd_id.required' => 'Wajib di isi',
         'periode_akhir.required' => 'Wajib di isi',
         'periode_awal.required' => 'Wajib di isi',
-        'jam_kerja_group.required' => 'Wajib di isi',
       ];
 
       $validator = Validator::make($request->all(), [
         'skpd_id' => 'required',
         'periode_akhir' => 'required',
         'periode_awal' => 'required',
-        'jam_kerja_group' => 'required',
       ], $message);
 
       if($validator->fails())
@@ -66,7 +62,13 @@ class JadwalKerjaController extends Controller
       $set->skpd_id = $request->skpd_id;
       $set->periode_awal = $request->periode_awal;
       $set->periode_akhir = $request->periode_akhir;
-      $set->jam_kerja_group = $request->jam_kerja_group;
+      $set->jadwal_1 = $request->senin;
+      $set->jadwal_2 = $request->selasa;
+      $set->jadwal_3 = $request->rabu;
+      $set->jadwal_4 = $request->kamis;
+      $set->jadwal_5 = $request->jumat;
+      $set->jadwal_6 = $request->sabtu;
+      $set->jadwal_7 = $request->minggu;
       $set->flag_status = 1;
       $set->actor = Auth::user()->pegawai_id;
       $set->save();
@@ -79,9 +81,9 @@ class JadwalKerjaController extends Controller
     {
       $getJadwal = JadwalKerja::find($id);
       $getSKPD = Skpd::get();
-      $kerjaGroup = JamKerjaGroup::groupBy('group_id')->orderBy('nama_group', 'asc')->get();
+      $jamKerja = JamKerja::get();
 
-      return view('pages.jadwalkerja.jadwalEdit', compact('getJadwal', 'getSKPD', 'kerjaGroup'));
+      return view('pages.jadwalkerja.jadwalEdit', compact('getJadwal', 'getSKPD', 'jamKerja'));
 
     }
 
@@ -91,14 +93,12 @@ class JadwalKerjaController extends Controller
         'skpd_id.required' => 'Wajib di isi',
         'periode_akhir.required' => 'Wajib di isi',
         'periode_awal.required' => 'Wajib di isi',
-        'jam_kerja_group.required' => 'Wajib di isi',
       ];
 
       $validator = Validator::make($request->all(), [
         'skpd_id' => 'required',
         'periode_akhir' => 'required',
         'periode_awal' => 'required',
-        'jam_kerja_group' => 'required',
       ], $message);
 
       if($validator->fails())
@@ -110,7 +110,13 @@ class JadwalKerjaController extends Controller
       $set->skpd_id = $request->skpd_id;
       $set->periode_awal = $request->periode_awal;
       $set->periode_akhir = $request->periode_akhir;
-      $set->jam_kerja_group = $request->jam_kerja_group;
+      $set->jadwal_1 = $request->senin;
+      $set->jadwal_2 = $request->selasa;
+      $set->jadwal_3 = $request->rabu;
+      $set->jadwal_4 = $request->kamis;
+      $set->jadwal_5 = $request->jumat;
+      $set->jadwal_6 = $request->sabtu;
+      $set->jadwal_7 = $request->minggu;
       $set->flag_status = $request->flag_status;
       $set->actor = Auth::user()->pegawai_id;
       $set->update();
@@ -118,246 +124,116 @@ class JadwalKerjaController extends Controller
       return redirect()->route('jadwal-kerja')->with('berhasil', 'Berhasil Mengubah Jadwal Kerja');
     }
 
+    /** START JADWAL KERJA **/
 
-    /** START JAM KERJA **/
-    public function jamKerja()
-    {
-      $getJamKerja = JamKerja::join('preson_pegawais', 'preson_pegawais.id', '=', 'preson_jam_kerja.actor')
-                              ->select('preson_jam_kerja.*', 'preson_pegawais.nama as actor')
-                              ->get();
-
-      return view('pages.jadwalkerja.jamkerja', compact('getJamKerja'));
-    }
-
-    public function jamKerjaTambah()
-    {
-      return view('pages.jadwalkerja.jamkerjaAdd');
-    }
-
-    public function jamKerjaPost(Request $request)
-    {
-      $message = [
-        'nama_jam_kerja.required' => 'Wajib di isi',
-        'jam_masuk.required' => 'Wajib di isi',
-        'jam_masuk_awal.required' => 'Wajib di isi',
-        'jam_masuk_akhir.required' => 'Wajib di isi',
-        'jam_pulang.required' => 'Wajib di isi',
-        'jam_pulang_awal.required' => 'Wajib di isi',
-        'jam_pulang_akhir.required' => 'Wajib di isi',
-        'toleransi_pulcep.required' => 'Wajib di isi',
-        'toleransi_terlambat.required' => 'Wajib di isi',
-      ];
-
-      $validator = Validator::make($request->all(), [
-        'nama_jam_kerja' => 'required',
-        'jam_masuk' => 'required',
-        'jam_masuk_awal' => 'required',
-        'jam_masuk_akhir' => 'required',
-        'jam_pulang' => 'required',
-        'jam_pulang_awal' => 'required',
-        'jam_pulang_akhir' => 'required',
-        'toleransi_pulcep' => 'required',
-        'toleransi_terlambat' => 'required',
-      ], $message);
-
-      if($validator->fails())
-      {
-        return redirect()->route('jadwal-kerja.tambahjam')->withErrors($validator)->withInput();
-      }
-
-      if($request->flag_besok == "on"){
-        $flag_besok = 1;
-      }else{
-        $flag_besok = 0;
-      }
-
-      $set = new JamKerja;
-      $set->nama_jam_kerja = $request->nama_jam_kerja;
-      $set->jam_masuk = $request->jam_masuk;
-      $set->jam_masuk_awal = $request->jam_masuk_awal;
-      $set->jam_masuk_akhir = $request->jam_masuk_akhir;
-      $set->jam_pulang = $request->jam_pulang;
-      $set->jam_pulang_awal = $request->jam_pulang_awal;
-      $set->jam_pulang_akhir = $request->jam_pulang_akhir;
-      $set->toleransi_pulcep = $request->toleransi_pulcep;
-      $set->toleransi_terlambat = $request->toleransi_terlambat;
-      $set->flag_besok = $flag_besok;
-      $set->flag_status = 1;
-      $set->actor = Auth::user()->pegawai_id;
-      $set->save();
-
-      return redirect()->route('jadwal-kerja.jam')->with('berhasil', 'Berhasil Menambahkan Jam Kerja');
-    }
-
-    public function jamKerjaUbah($id)
-    {
-      $getJamKerja = JamKerja::find($id);
-
-      return view('pages.jadwalkerja.jamkerjaEdit', compact('getJamKerja'));
-    }
-
-    public function jamKerjaEdit(Request $request)
-    {
-      $message = [
-        'nama_jam_kerja.required' => 'Wajib di isi',
-        'jam_masuk.required' => 'Wajib di isi',
-        'jam_masuk_awal.required' => 'Wajib di isi',
-        'jam_masuk_akhir.required' => 'Wajib di isi',
-        'jam_pulang.required' => 'Wajib di isi',
-        'jam_pulang_awal.required' => 'Wajib di isi',
-        'jam_pulang_akhir.required' => 'Wajib di isi',
-        'toleransi_pulcep.required' => 'Wajib di isi',
-        'toleransi_terlambat.required' => 'Wajib di isi',
-      ];
-
-      $validator = Validator::make($request->all(), [
-        'nama_jam_kerja' => 'required',
-        'jam_masuk' => 'required',
-        'jam_masuk_awal' => 'required',
-        'jam_masuk_akhir' => 'required',
-        'jam_pulang' => 'required',
-        'jam_pulang_awal' => 'required',
-        'jam_pulang_akhir' => 'required',
-        'toleransi_pulcep' => 'required',
-        'toleransi_terlambat' => 'required',
-      ], $message);
-
-      if($validator->fails())
-      {
-        return redirect()->route('jadwal-kerja.ubahjam', ['id' => $request->id])->withErrors($validator)->withInput();
-      }
-
-      if($request->flag_besok == "on"){
-        $flag_besok = 1;
-      }else{
-        $flag_besok = 0;
-      }
-
-      $set = JamKerja::find($request->id);
-      $set->nama_jam_kerja = $request->nama_jam_kerja;
-      $set->jam_masuk = $request->jam_masuk;
-      $set->jam_masuk_awal = $request->jam_masuk_awal;
-      $set->jam_masuk_akhir = $request->jam_masuk_akhir;
-      $set->jam_pulang = $request->jam_pulang;
-      $set->jam_pulang_awal = $request->jam_pulang_awal;
-      $set->jam_pulang_akhir = $request->jam_pulang_akhir;
-      $set->flag_besok = $flag_besok;
-      $set->toleransi_pulcep = $request->toleransi_pulcep;
-      $set->toleransi_terlambat = $request->toleransi_terlambat;
-      $set->flag_status = 1;
-      $set->actor = Auth::user()->pegawai_id;
-      $set->update();
-
-      return redirect()->route('jadwal-kerja.jam')->with('berhasil', 'Berhasil Mengubah Jam Kerja');
-    }
-    /** END JAM KERJA **/
 
     /** START JAM KERJA GROUP **/
-    public function jamGroup()
-    {
-      $getJamGroup = JamKerjaGroup::get();
-
-      return view('pages.jadwalkerja.jamkerjagroup', compact('getJamGroup'));
-    }
-
-    public function jamGroupAdd()
-    {
-      $getJamKerja = JamKerja::get();
-
-      return view('pages.jadwalkerja.jamkerjagroupAdd', compact('getJamKerja'));
-    }
-
-    public function jamGroupPost(Request $request)
-    {
-      $message  = [
-        'nama_group.required'  => 'Wajib di isi',
-      ];
-
-      $validator = Validator::make($request->all(), [
-        'nama_group'  => 'required',
-      ], $message);
-
-      if($validator->fails()){
-        return redirect()->route('jadwal-kerja.tambahgroup')->withErrors($validator)->withInput();
-      }
-
-      $group = JamKerjaGroup::select('group_id')->max('group_id');
-      if($group == null){
-        $group += 1;
-      }else{
-        $group += 1;
-      }
-
-      DB::transaction(function() use($request, $group) {
-        $jamKerja = $request->input('jamKerja');
-        if($jamKerja != ""){
-          foreach($jamKerja as $jam){
-            if($jam['jam_kerja_id'] != null){
-              $create = new JamKerjaGroup;
-              $create->nama_group   = $request->nama_group;
-              $create->group_id     = $group;
-              $create->jam_kerja_id = $jam['jam_kerja_id'];
-              $create->flag_status = 1;
-              $create->actor = Auth::user()->pegawai_id;
-              $create->save();
-            }
-          }
-        }
-      });
-
-      return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Ditambah');
-    }
-
-    public function jamGroupLihat($group_id)
-    {
-      $lihats = JamKerjaGroup::where('group_id', '=', $group_id)->get();
-      $getJamKerja = JamKerja::get();
-
-      return view('pages.jadwalkerja.jamkerjagroupLihat', compact('lihats', 'getJamKerja'));
-    }
-
-    public function jamGroupUbah(Request $request)
-    {
-
-      DB::transaction(function() use($request) {
-        $jamKerja = $request->input('jamKerja');
-        if($jamKerja != ""){
-          foreach($jamKerja as $jam){
-            if($jam['jam_kerja_id'] != null){
-              $create = new JamKerjaGroup;
-              $create->nama_group   = $request->nama_group;
-              $create->group_id     = $request->group_id;
-              $create->jam_kerja_id = $jam['jam_kerja_id'];
-              $create->flag_status = 1;
-              $create->actor = Auth::user()->pegawai_id;
-              $create->save();
-            }
-          }
-        }
-      });
-
-      return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Ditambah');
-    }
-
-    public function nonAktif($id)
-    {
-      $set = JamKerjaGroup::find($id);
-      $set->flag_status = 0;
-      $set->actor = Auth::user()->pegawai_id;
-      $set->update();
-
-      return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Dinonktif');
-    }
-
-    public function aktif($id)
-    {
-      $set = JamKerjaGroup::find($id);
-      $set->flag_status = 1;
-      $set->actor = Auth::user()->pegawai_id;
-      $set->update();
-
-      return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Diaktifkan');
-    }
+    // public function jamGroup()
+    // {
+    //   $getJamGroup = JamKerjaGroup::where('flag_status', 1)->groupBy('group_id')->get();
+    //   $getJamKerja = JamKerja::with('groupJamKerja')->where('flag_status', 1)->get();
+    //   // dd($getJamKerja);
+    //   return view('pages.jadwalkerja.jamkerjagroup', compact('getJamGroup'));
+    // }
+    //
+    // public function jamGroupAdd()
+    // {
+    //   $getJamKerja = JamKerja::get();
+    //
+    //   return view('pages.jadwalkerja.jamkerjagroupAdd', compact('getJamKerja'));
+    // }
+    //
+    // public function jamGroupPost(Request $request)
+    // {
+    //   $message  = [
+    //     'nama_group.required'  => 'Wajib di isi',
+    //   ];
+    //
+    //   $validator = Validator::make($request->all(), [
+    //     'nama_group'  => 'required',
+    //   ], $message);
+    //
+    //   if($validator->fails()){
+    //     return redirect()->route('jadwal-kerja.tambahgroup')->withErrors($validator)->withInput();
+    //   }
+    //
+    //   $group = JamKerjaGroup::select('group_id')->max('group_id');
+    //   if($group == null){
+    //     $group += 1;
+    //   }else{
+    //     $group += 1;
+    //   }
+    //
+    //   DB::transaction(function() use($request, $group) {
+    //     $jamKerja = $request->input('jamKerja');
+    //     if($jamKerja != ""){
+    //       foreach($jamKerja as $jam){
+    //         if($jam['jam_kerja_id'] != null){
+    //           $create = new JamKerjaGroup;
+    //           $create->nama_group   = $request->nama_group;
+    //           $create->group_id     = $group;
+    //           $create->jam_kerja_id = $jam['jam_kerja_id'];
+    //           $create->flag_status = 1;
+    //           $create->actor = Auth::user()->pegawai_id;
+    //           $create->save();
+    //         }
+    //       }
+    //     }
+    //   });
+    //
+    //   return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Ditambah');
+    // }
+    //
+    // public function jamGroupLihat($group_id)
+    // {
+    //   $lihats = JamKerjaGroup::where('group_id', '=', $group_id)->get();
+    //   $getJamKerja = JamKerja::get();
+    //
+    //   return view('pages.jadwalkerja.jamkerjagroupLihat', compact('lihats', 'getJamKerja'));
+    // }
+    //
+    // public function jamGroupUbah(Request $request)
+    // {
+    //
+    //   DB::transaction(function() use($request) {
+    //     $jamKerja = $request->input('jamKerja');
+    //     if($jamKerja != ""){
+    //       foreach($jamKerja as $jam){
+    //         if($jam['jam_kerja_id'] != null){
+    //           $create = new JamKerjaGroup;
+    //           $create->nama_group   = $request->nama_group;
+    //           $create->group_id     = $request->group_id;
+    //           $create->jam_kerja_id = $jam['jam_kerja_id'];
+    //           $create->flag_status = 1;
+    //           $create->actor = Auth::user()->pegawai_id;
+    //           $create->save();
+    //         }
+    //       }
+    //     }
+    //   });
+    //
+    //   return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Ditambah');
+    // }
+    //
+    // public function nonAktif($id)
+    // {
+    //   $set = JamKerjaGroup::find($id);
+    //   $set->flag_status = 0;
+    //   $set->actor = Auth::user()->pegawai_id;
+    //   $set->update();
+    //
+    //   return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Dinonktif');
+    // }
+    //
+    // public function aktif($id)
+    // {
+    //   $set = JamKerjaGroup::find($id);
+    //   $set->flag_status = 1;
+    //   $set->actor = Auth::user()->pegawai_id;
+    //   $set->update();
+    //
+    //   return redirect()->route('jadwal-kerja.group')->with('berhasil','Group Jam Kerja Berhasil Diaktifkan');
+    // }
     /** END JAM KERJA GROUP **/
 
 }
