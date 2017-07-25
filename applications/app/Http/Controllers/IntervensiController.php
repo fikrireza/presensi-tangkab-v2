@@ -230,7 +230,7 @@ class IntervensiController extends Controller
       $set = new intervensi;
       $set->pegawai_id = Auth::user()->pegawai_id;
       $set->jenis_intervensi = $getnamaintervensi->nama_intervensi;
--     $set->id_intervensi = $request->jenis_intervensi;
+      $set->id_intervensi = $request->jenis_intervensi;
       $set->tanggal_mulai = $request->tanggal_mulai;
       $set->tanggal_akhir = $request->tanggal_akhir;
       $set->jumlah_hari = $countjumlhari;

@@ -14,6 +14,11 @@ use App\Models\JamKerjaGroup;
 use DB;
 use Auth;
 use Validator;
+use DateTime;
+use DatePeriod;
+use DateIntercal;
+use DateInterval;
+use Carbon\Carbon;
 
 class JadwalKerjaController extends Controller
 {
@@ -57,6 +62,49 @@ class JadwalKerjaController extends Controller
       {
         return redirect()->route('jadwal-kerja.tambah')->withErrors($validator)->withInput();
       }
+
+      // --- check validasi periode jadwal kerja skpd
+      $getPeriode = JadwalKerja::select('periode_awal', 'periode_akhir')
+                                          ->where('skpd_id', $request->skpd_id)
+                                          ->where('flag_status', '=', 1)
+                                          ->get();
+
+      $tanggalmulai = $request->periode_akhir;
+      $tanggalakhir = $request->periode_akhir;
+
+      $dateRange=array();
+      $iDateFrom=mktime(1,0,0,substr($tanggalmulai,5,2), substr($tanggalmulai,8,2), substr($tanggalmulai,0,4));
+      $iDateTo=mktime(1,0,0,substr($tanggalakhir,5,2), substr($tanggalakhir,8,2), substr($tanggalakhir,0,4));
+
+      if ($iDateTo>=$iDateFrom)
+      {
+          array_push($dateRange,date('Y-m-d',$iDateFrom)); // first entry
+          while ($iDateFrom<$iDateTo)
+          {
+              $iDateFrom+=86400; // add 24 hours
+              array_push($dateRange,date('Y-m-d',$iDateFrom));
+          }
+      }
+
+      $flagtanggal = 0;
+      foreach ($dateRange as $key) {
+        foreach ($getPeriode as $keys) {
+          $start_ts = strtotime($keys->periode_awal);
+          $end_ts = strtotime($keys->periode_akhir);
+          $user_ts = strtotime($key);
+
+          if (($user_ts >= $start_ts) && ($user_ts <= $end_ts)) {
+            $flagtanggal=1;
+            break;
+          }
+        }
+        if ($flagtanggal==1) break;
+      }
+
+      if ($flagtanggal==1) {
+        return redirect()->route('jadwal-kerja.tambah')->withErrors($validator)->withInput()->with('gagal', 'Periode ini sudah ada '.$getPeriode[0]->periode_awal.' s/d '.$getPeriode[0]->periode_akhir);
+      }
+      // --- endcheck validasi periode jadwal kerja skpd
 
       $set = new JadwalKerja;
       $set->skpd_id = $request->skpd_id;
@@ -103,8 +151,56 @@ class JadwalKerjaController extends Controller
 
       if($validator->fails())
       {
-        return redirect()->route('jadwal-kerja.tambah')->withErrors($validator)->withInput();
+        return redirect()->route('jadwal-kerja.ubah', ['id' => $request->id ])->withErrors($validator)->withInput();
       }
+
+      // --- check validasi periode jadwal kerja skpd
+      $cek = JadwalKerja::find($request->id);
+      if ($request->periode_awal!=$cek->periode_awal || $request->periode_akhir!=$cek->periode_akhir) {
+        $getPeriode = JadwalKerja::select('periode_awal', 'periode_akhir')
+                                            ->where('skpd_id', $request->skpd_id)
+                                            ->where('id', '!=', $request->id)
+                                            ->where('flag_status', '=', 1)
+                                            ->get();
+
+        $tanggalmulai = $request->periode_awal;
+        $tanggalakhir = $request->periode_akhir;
+
+        $dateRange=array();
+        $iDateFrom=mktime(1,0,0,substr($tanggalmulai,5,2),     substr($tanggalmulai,8,2),substr($tanggalmulai,0,4));
+        $iDateTo=mktime(1,0,0,substr($tanggalakhir,5,2),     substr($tanggalakhir,8,2),substr($tanggalakhir,0,4));
+
+        if ($iDateTo>=$iDateFrom)
+        {
+            array_push($dateRange,date('Y-m-d',$iDateFrom)); // first entry
+            while ($iDateFrom<$iDateTo)
+            {
+                $iDateFrom+=86400; // add 24 hours
+                array_push($dateRange,date('Y-m-d',$iDateFrom));
+            }
+        }
+
+        $flagtanggal = 0;
+        foreach ($dateRange as $key) {
+          foreach ($getPeriode as $keys) {
+            $start_ts = strtotime($keys->periode_awal);
+            $end_ts = strtotime($keys->periode_akhir);
+            $user_ts = strtotime($key);
+
+            if (($user_ts >= $start_ts) && ($user_ts <= $end_ts)) {
+              $flagtanggal=1;
+              break;
+            }
+          }
+          if ($flagtanggal==1) break;
+        }
+
+        if ($flagtanggal==1) {
+          return redirect()->route('jadwal-kerja.ubah', ['id' => $request->id ])->withErrors($validator)->withInput()->with('gagal', 'Periode ini sudah ada '.$getPeriode[0]->periode_awal.' s/d '.$getPeriode[0]->periode_akhir);
+        }
+      }
+      // --- endcheck validasi periode jadwal kerja skpd
+
 
       $set = JadwalKerja::find($request->id);
       $set->skpd_id = $request->skpd_id;

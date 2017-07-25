@@ -13,6 +13,7 @@
 @endsection
 
 @section('content')
+@if(Session::has('berhasil'))
 <script>
   window.setTimeout(function() {
     $(".alert-success").fadeTo(500, 0).slideUp(500, function(){
@@ -21,7 +22,6 @@
   }, 2000);
 </script>
 
-@if(Session::has('berhasil'))
 <div class="row">
   <div class="col-md-12">
     <div class="alert alert-success">

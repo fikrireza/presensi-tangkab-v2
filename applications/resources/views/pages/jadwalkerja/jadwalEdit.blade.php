@@ -19,6 +19,28 @@
 @endsection
 
 @section('content')
+
+  @if(Session::has('gagal'))
+  <script>
+    window.setTimeout(function() {
+      $(".alert-danger").fadeTo(500, 0).slideUp(500, function(){
+          $(this).remove();
+      });
+    }, 7000);
+  </script>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h4><i class="icon fa fa-check"></i> Gagal!</h4>
+        <p><b>{{ Session::get('gagal') }}</b></p>
+      </div>
+    </div>
+  </div>
+  @endif
+  
+
 <div class="row">
   <div class="col-md-8">
     <div class="box box-primary box-solid">

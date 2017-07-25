@@ -19,6 +19,28 @@
 @endsection
 
 @section('content')
+
+  @if(Session::has('gagal'))
+  <script>
+    window.setTimeout(function() {
+      $(".alert-danger").fadeTo(500, 0).slideUp(500, function(){
+          $(this).remove();
+      });
+    }, 7000);
+  </script>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h4><i class="icon fa fa-check"></i> Gagal!</h4>
+        <p><b>{{ Session::get('gagal') }}</b></p>
+      </div>
+    </div>
+  </div>
+  @endif
+
+
 <div class="row">
   <div class="col-md-12">
     <div class="box box-primary box-solid">
@@ -35,7 +57,7 @@
               <select  name="skpd_id" class="form-control select2" required="">
                 <option value="">--Pilih--</option>
                 @foreach ($getSKPD as $key)
-                <option value="{{$key->id}}">{{$key->nama}}</option>
+                <option value="{{$key->id}}" {{ old('skpd_id') == $key->id ? 'selected=""' : ''}}>{{$key->nama}}</option>
                 @endforeach
               </select>
             </div>
@@ -70,7 +92,7 @@
               <select name="senin" class="form-control pilihHari">
                 <option value=""></option>
                 @foreach ($jamKerja as $key)
-                <option value="{{$key->id}}">{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                <option value="{{$key->id}}" {{ old('senin') == $key->id ? 'selected=""' : '' }}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
                 @endforeach
               </select>
             </div>
@@ -81,7 +103,7 @@
               <select name="selasa" class="form-control pilihHari">
                 <option value=""></option>
                 @foreach ($jamKerja as $key)
-                <option value="{{$key->id}}">{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                <option value="{{$key->id}}" {{ old('selasa') == $key->id ? 'selected=""' : '' }}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
                 @endforeach
               </select>
             </div>
@@ -92,7 +114,7 @@
               <select name="rabu" class="form-control pilihHari">
                 <option value=""></option>
                 @foreach ($jamKerja as $key)
-                <option value="{{$key->id}}">{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                <option value="{{$key->id}}" {{ old('rabu') == $key->id ? 'selected=""' : '' }}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
                 @endforeach
               </select>
             </div>
@@ -103,7 +125,7 @@
               <select name="kamis" class="form-control pilihHari">
                 <option value=""></option>
                 @foreach ($jamKerja as $key)
-                <option value="{{$key->id}}">{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                <option value="{{$key->id}}" {{ old('kamis') == $key->id ? 'selected=""' : '' }}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
                 @endforeach
               </select>
             </div>
@@ -114,7 +136,7 @@
               <select name="jumat" class="form-control pilihHari">
                 <option value=""></option>
                 @foreach ($jamKerja as $key)
-                <option value="{{$key->id}}">{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                <option value="{{$key->id}}" {{ old('jumat') == $key->id ? 'selected=""' : '' }}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
                 @endforeach
               </select>
             </div>
@@ -125,7 +147,7 @@
               <select name="sabtu" class="form-control pilihHari">
                 <option value=""></option>
                 @foreach ($jamKerja as $key)
-                <option value="{{$key->id}}">{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                <option value="{{$key->id}}" {{ old('sabtu') == $key->id ? 'selected=""' : '' }}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
                 @endforeach
               </select>
             </div>
@@ -136,7 +158,7 @@
               <select name="minggu" class="form-control pilihHari">
                 <option value=""></option>
                 @foreach ($jamKerja as $key)
-                <option value="{{$key->id}}">{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                <option value="{{$key->id}}" {{ old('minggu') == $key->id ? 'selected=""' : '' }}>{{$key->nama_jam_kerja}} || {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
                 @endforeach
               </select>
             </div>
