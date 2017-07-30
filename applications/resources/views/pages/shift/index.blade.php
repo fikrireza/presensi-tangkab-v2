@@ -26,6 +26,29 @@
 </div>
 @endif
 
+
+<div class="modal fade modal-remove" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel2">Remove SKPD From Shift?</h4>
+      </div>
+      <div class="modal-body">
+        <h4>Yakin ?</h4>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary" id="setRemove">Ya</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
 <div class="row">
   <div class="col-md-8 col-md-offset-2">
     <div class="box box-primary box-solid">
@@ -69,12 +92,16 @@
             <tr>
               <th>No</th>
               <th>SKPD</th>
+              @if(session('status') == 'administrator' || session('status') == 'superuser')
+              <th>Aksi</th>
+              @endif
             </tr>
           </thead>
           <tfoot>
             <tr>
               <td></td>
-              <th></th>
+              <td></td>
+              <td></td>
             </tr>
           </tfoot>
           <tbody>
@@ -83,12 +110,16 @@
             <tr>
               <td>-</td>
               <td>-</td>
+              <td>-</td>
             </tr>
             @else
             @foreach ($skpdShift as $key)
             <tr>
               <td>{{ $no }}</td>
               <td>{{ $key->nama }}</td>
+              @if(session('status') == 'administrator' || session('status') == 'superuser')
+              <th><a href="" class="remove" data-value="{{ $key->id }}" data-toggle="modal" data-target=".modal-remove"><span class="label label-danger" data-toggle="tooltip" data-placement="top" title="Remove"><i class="fa fa-remove"></i></span></a></th>
+              @endif
             </tr>
             <?php $no++; ?>
             @endforeach
@@ -111,5 +142,12 @@ $(".select2").select2();
 $(function () {
   $("#table_shift").DataTable();
 });
+
+$(function(){
+    $('#table_shift').on('click', 'a.remove', function(){
+      var a = $(this).data('value');
+      $('#setRemove').attr('href', "{{ url('/') }}/shift/remove/"+a);
+    });
+  });
 </script>
 @endsection

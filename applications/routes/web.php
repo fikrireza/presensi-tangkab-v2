@@ -208,6 +208,7 @@ Route::get('jadwal-shift-group/aktif/{id}', 'JamKerjaShiftController@aktif')->na
 // Shift
 Route::get('shift', 'ShiftController@index')->name('shift.index');
 Route::post('shift', 'ShiftController@skpdShift')->name('shift.skpd');
+Route::get('shift/remove/{id}', 'ShiftController@skpdShiftRemove');
 Route::get('jadwal-shift', 'ShiftController@jadwalShift')->name('shift.jadwal');
 Route::post('jadwal-shift', 'ShiftController@jadwalShiftBulan')->name('shift.jadwalBulan');
 Route::get('jadwal-shift/{tanggal}', 'ShiftController@jadwalShiftTanggal')->name('shift.jadwaltanggal');

@@ -37,7 +37,7 @@ class JadwalKerjaController extends Controller
 
     public function jadwalTambah()
     {
-      $getSKPD = Skpd::get();
+      $getSKPD = Skpd::where('flag_shift', 0)->get();
       $jamKerja = JamKerja::get();
 
       return view('pages.jadwalkerja.jadwalTambah', compact('getSKPD', 'jamKerja'));

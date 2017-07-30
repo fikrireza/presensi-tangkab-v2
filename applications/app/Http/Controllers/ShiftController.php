@@ -47,6 +47,21 @@ class ShiftController extends Controller
       return redirect()->route('shift.index')->with('berhasil', 'SKPD Terpilih Menjadi Shift');
     }
 
+    public function skpdShiftRemove($id)
+    {
+        $getSkpd = Skpd::find($id);
+
+        if(!$getSkpd){
+          return view('errors.404');
+        }
+
+        $getSkpd->flag_shift = 0;
+        $getSkpd->actor = Auth::user()->id;
+        $getSkpd->update();
+
+        return redirect()->route('shift.index')->with('berhasil', 'SKPD Dihapus dari jadwal Shift');
+    }
+
     public function jadwalShift()
     {
       $month = date('m');
@@ -177,5 +192,5 @@ class ShiftController extends Controller
 
       return redirect()->route('shift.jadwaltanggal', ['tanggal' => $tanggal])->with('berhasil', 'Jadwal Pegawai '.$request->nama_pegawai.' Berhasil Dirubah');
     }
-    
+
 }
