@@ -31,7 +31,11 @@ class JamKerjaShiftController extends Controller
     /** START JAM KERJA GROUP **/
     public function index()
     {
-      $getJamGroup = JadwalKerjaShift::orderBy('flag_status', 'desc')->get();
+      if(session('status') == 'administrator' || session('status') == 'superuser'){
+        $getJamGroup = JadwalKerjaShift::orderBy('flag_status', 'desc')->get();
+      }else{
+        $getJamGroup = JadwalKerjaShift::where('skpd_id', Auth::user()->skpd_id)->orderBy('flag_status', 'desc')->get();
+      }
 
       return view('pages.jadwalkerjaShift.index', compact('getJamGroup'));
     }
@@ -39,17 +43,20 @@ class JamKerjaShiftController extends Controller
     public function tambah()
     {
       $getJamKerja = JamKerja::get();
+      $getSkpd = Skpd::where('flag_shift', 1)->get();
 
-      return view('pages.jadwalkerjaShift.tambah', compact('getJamKerja'));
+      return view('pages.jadwalkerjaShift.tambah', compact('getJamKerja', 'getSkpd'));
     }
 
     public function store(Request $request)
     {
       $message  = [
+        'skpd_id' => 'Wajib di isi',
         'nama_group.required'  => 'Wajib di isi',
       ];
 
       $validator = Validator::make($request->all(), [
+        'skpd_id'  => 'required',
         'nama_group'  => 'required',
       ], $message);
 
@@ -58,6 +65,7 @@ class JamKerjaShiftController extends Controller
       }
 
       $save = new JadwalKerjaShift;
+      $save->skpd_id = $request->skpd_id;
       $save->nama_group = $request->nama_group;
       $save->jadwal1 = $request->jadwal1;
       $save->jadwal2 = $request->jadwal2;
@@ -81,8 +89,9 @@ class JamKerjaShiftController extends Controller
       }
 
       $getJamKerja = JamKerja::get();
+      $getSkpd = Skpd::where('flag_shift', 1)->get();
 
-      return view('pages.jadwalkerjaShift.lihat', compact('getJadwalKerjaShift', 'getJamKerja'));
+      return view('pages.jadwalkerjaShift.lihat', compact('getJadwalKerjaShift', 'getJamKerja', 'getSkpd'));
     }
 
     public function edit(Request $request)

@@ -29,6 +29,21 @@
       <form class="form-horizontal" role="form" action="{{ route('jamkerjaShift.store') }}" method="post">
         {{ csrf_field() }}
         <div class="box-body">
+          @if(session('status') == 'administrator' || session('status') == 'superuser')
+          <div class="form-group {{ $errors->has('skpd_id') ? 'has-error' : '' }}">
+            <label class="col-sm-4 control-label">SKPD</label>
+            <div class="col-sm-8">
+              <select name="skpd_id" class="form-control select2">
+                <option value="">--Pilih--</option>
+                @foreach ($getSkpd as $key)
+                  <option value="{{$key->id}}" {{ old('skpd_id') == $key->id ? 'selected=""' : '' }}>{{$key->nama}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          @else
+          <input type="hidden" name="skpd_id" value="{{ Auth::user()->skpd_id }}">
+          @endif
           <div class="form-group {{ $errors->has('nama_group') ? 'has-error' : '' }}">
             <label class="col-sm-4 control-label">Nama Group Jam Kerja</label>
             <div class="col-sm-8">

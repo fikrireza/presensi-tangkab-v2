@@ -48,10 +48,10 @@
         <div class="row">
           <div class="col-md-6 col-md-offset-3">
             <label class="control-label">Pilih Jam Kerja</label>
-            <select class="form-control select2" name="jam_kerja_id" required="">
+            <select class="form-control select2" name="jadwal_kerja_shift_id" required="">
                 <option value="">--PILIH--</option>
-                @foreach ($getJamKerja as $key)
-                <option value="{{ $key->id }}">{{ $key->nama_jam_kerja}} - {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                @foreach ($getJadwalKerjaShift as $key)
+                <option value="{{ $key->id }}">{{ $key->nama_group}}</option>
                 @endforeach
             </select>
             <input type="hidden" name="tanggal" value="{{ date("Y-m-d", strtotime($tanggal)) }}">
@@ -110,9 +110,7 @@
               <th>No</th>
               <th>NIP</th>
               <th>Nama</th>
-              <th>Jam Kerja</th>
-              <th>Jam Masuk</th>
-              <th>Jam Pulang</th>
+              <th>Group Jam Kerja</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -123,9 +121,7 @@
               <td>{{ $no }}</td>
               <td>{{ $key->nip_sapk }}</td>
               <td>{{ $key->nama }}</td>
-              <td>{{ $key->nama_jam_kerja }}</td>
-              <td>{{ $key->jam_masuk }}</td>
-              <td>{{ $key->jam_pulang }}</td>
+              <td>{{ $key->nama_group }}</td>
               <td><a href="{{ route('shift.jadwalUbah', ['id' => $key->id]) }}"><i class="fa fa-edit"></i> Ubah</a></td>
             </tr>
             <?php $no++; ?>

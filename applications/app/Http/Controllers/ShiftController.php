@@ -106,37 +106,51 @@ class ShiftController extends Controller
     public function jadwalShiftTanggal($tanggal)
     {
       $skpd_id   = Auth::user()->skpd_id;
-      $list = DB::select("SELECT a.nama, a.fid, b.nama_group, c.nama_jam_kerja, d.tanggal, c.jam_masuk, c.jam_pulang
-                          FROM preson_pegawais a, preson_jam_kerja_group b, preson_jam_kerja c, preson_shift_log d, preson_skpd e
-                          WHERE b.jam_kerja_id = c.id
-                          AND d.jam_kerja_id = c.id
-                          AND d.fid = a.fid
-                          AND DATE_FORMAT(STR_TO_DATE(d.tanggal,'%Y-%m-%d'), '%d-%m-%Y') = '$tanggal'
-                          AND a.skpd_id = e.id
-                          AND a.skpd_id = '$skpd_id'
-                          group by a.nama
-                          order by c.nama_jam_kerja asc");
+      // $list = DB::select("SELECT a.nama, a.fid, b.nama_group, c.nama_jam_kerja, d.tanggal, c.jam_masuk, c.jam_pulang
+      //                     FROM preson_pegawais a, preson_jam_kerja_group b, preson_jam_kerja c, preson_shift_log d, preson_skpd e
+      //                     WHERE b.jam_kerja_id = c.id
+      //                     AND d.jam_kerja_id = c.id
+      //                     AND d.fid = a.fid
+      //                     AND DATE_FORMAT(STR_TO_DATE(d.tanggal,'%Y-%m-%d'), '%d-%m-%Y') = '$tanggal'
+      //                     AND a.skpd_id = e.id
+      //                     AND a.skpd_id = '$skpd_id'
+      //                     group by a.nama
+      //                     order by c.nama_jam_kerja asc");
 
-      $getPegawai = DB::select("SELECT preson_pegawais.nip_sapk, preson_pegawais.nama as nama_pegawai, preson_pegawais.fid from preson_pegawais, preson_strukturals
-                                WHERE preson_pegawais.fid NOT IN (SELECT fid FROM (preson_shift_log) WHERE DATE_FORMAT(STR_TO_DATE(preson_shift_log.tanggal,'%Y-%m-%d'), '%d-%m-%Y') = '$tanggal')
+      // $getPegawai = DB::select("SELECT preson_pegawais.nip_sapk, preson_pegawais.nama as nama_pegawai, preson_pegawais.fid from preson_pegawais, preson_strukturals
+      //                           WHERE preson_pegawais.fid NOT IN (SELECT fid FROM (preson_shift_log) WHERE DATE_FORMAT(STR_TO_DATE(preson_shift_log.tanggal,'%Y-%m-%d'), '%d-%m-%Y') = '$tanggal')
+      //                           AND preson_pegawais.skpd_id = $skpd_id
+      //                           AND preson_strukturals.id = preson_pegawais.struktural_id
+      //                           AND preson_pegawais.status = 1
+      //                           ORDER BY preson_strukturals.nama ASC");
+      $getPegawai = DB::select("SELECT preson_pegawais.nip_sapk, preson_pegawais.nama as nama_pegawai, preson_pegawais.fid
+                                FROM preson_pegawais
+                                WHERE preson_pegawais.fid NOT IN (SELECT fid
+                                																	FROM preson_shift_log
+                                																	WHERE DATE_FORMAT(STR_TO_DATE(preson_shift_log.tanggal,'%Y-%m-%d'), '%d-%m-%Y') = '$tanggal')
                                 AND preson_pegawais.skpd_id = $skpd_id
-                                AND preson_strukturals.id = preson_pegawais.struktural_id
                                 AND preson_pegawais.status = 1
-                                ORDER BY preson_strukturals.nama ASC");
+                                ORDER By preson_pegawais.nama ASC");
 
-      $getJamKerja = DB::select("SELECT preson_jam_kerja.*
-                                FROM preson_jadwal_kerja, preson_jam_kerja_group, preson_jam_kerja
-                                WHERE preson_jadwal_kerja.skpd_id = $skpd_id
-                                AND preson_jadwal_kerja.jam_kerja_group = preson_jam_kerja_group.group_id
-                                AND preson_jam_kerja_group.jam_kerja_id = preson_jam_kerja.id ");
+      $getJadwalKerjaShift = DB::select("SELECT *
+                                FROM preson_jadwal_kerja_shift WHERE skpd_id = '$skpd_id'");
 
-      $getPegawaiKerja = DB::select("SELECT preson_shift_log.id, preson_pegawais.nama, preson_pegawais.nip_sapk, preson_jam_kerja.nama_jam_kerja, preson_jam_kerja.jam_masuk, preson_jam_kerja.jam_pulang FROM preson_shift_log, preson_pegawais, preson_jam_kerja
-                                      WHERE preson_pegawais.fid = preson_shift_log.fid
-                                      AND preson_shift_log.jam_kerja_id = preson_jam_kerja.id
-                                      AND preson_pegawais.skpd_id = $skpd_id
-                                      AND DATE_FORMAT(STR_TO_DATE(preson_shift_log.tanggal,'%Y-%m-%d'), '%d-%m-%Y') = '$tanggal'");
 
-      return view('pages.shift.jadwalShiftTanggal', compact('tanggal','list','getPegawai','getJamKerja','getPegawaiKerja'));
+      // $getPegawaiKerja = DB::select("SELECT preson_shift_log.id, preson_pegawais.nama, preson_pegawais.nip_sapk, preson_jam_kerja.nama_jam_kerja, preson_jam_kerja.jam_masuk, preson_jam_kerja.jam_pulang FROM preson_shift_log, preson_pegawais, preson_jam_kerja
+      //                                 WHERE preson_pegawais.fid = preson_shift_log.fid
+      //                                 AND preson_shift_log.jam_kerja_id = preson_jam_kerja.id
+      //                                 AND preson_pegawais.skpd_id = $skpd_id
+      //                                 AND DATE_FORMAT(STR_TO_DATE(preson_shift_log.tanggal,'%Y-%m-%d'), '%d-%m-%Y') = '$tanggal'");
+      $getPegawaiKerja = DB::select("SELECT preson_shift_log.id, preson_pegawais.nama, preson_pegawais.nip_sapk, preson_jadwal_kerja_shift.nama_group
+                                    FROM preson_shift_log, preson_pegawais, preson_jadwal_kerja_shift, preson_jam_kerja
+                                    WHERE preson_pegawais.fid = preson_shift_log.fid
+                                    AND preson_shift_log.jadwal_kerja_shift_id = preson_jadwal_kerja_shift.id
+                                    AND preson_pegawais.skpd_id = '$skpd_id'
+                                    AND DATE_FORMAT(STR_TO_DATE(preson_shift_log.tanggal,'%Y-%m-%d'), '%d-%m-%Y') = '$tanggal'
+                                    GROUP BY preson_pegawais.fid
+                                    ORDER By preson_pegawais.nama ASC");
+
+      return view('pages.shift.jadwalShiftTanggal', compact('tanggal','getPegawai','getJadwalKerjaShift','getPegawaiKerja'));
     }
 
     public function jadwalShiftTanggalStore(Request $request)
@@ -145,7 +159,7 @@ class ShiftController extends Controller
       foreach ($request->pegawai_fid as $pegawai) {
         $save = new Shift;
         $save->fid = $pegawai;
-        $save->jam_kerja_id = $request->jam_kerja_id;
+        $save->jadwal_kerja_shift_id = $request->jadwal_kerja_shift_id;
         $save->tanggal  = $request->tanggal;
         $save->actor = Auth::user()->pegawai_id;
         $save->save();
@@ -170,20 +184,17 @@ class ShiftController extends Controller
       }
 
       $skpd_id   = Auth::user()->skpd_id;
-      $getJamKerja = DB::select("SELECT preson_jam_kerja.*
-                                FROM preson_jadwal_kerja, preson_jam_kerja_group, preson_jam_kerja
-                                WHERE preson_jadwal_kerja.skpd_id = $skpd_id
-                                AND preson_jadwal_kerja.jam_kerja_group = preson_jam_kerja_group.group_id
-                                AND preson_jam_kerja_group.jam_kerja_id = preson_jam_kerja.id ");
+      $getJadwalKerjaShift = DB::select("SELECT *
+                                FROM preson_jadwal_kerja_shift WHERE skpd_id = '$skpd_id'");
 
-      return view('pages.shift.jadwalShiftUbah', compact('getShift', 'getJamKerja'));
+      return view('pages.shift.jadwalShiftUbah', compact('getShift', 'getJadwalKerjaShift'));
 
     }
 
     public function jadwalShiftEdit(Request $request)
     {
       $set = Shift::find($request->id);
-      $set->jam_kerja_id = $request->jam_kerja_id;
+      $set->jadwal_kerja_shift_id = $request->jadwal_kerja_shift_id;
       $set->actor = Auth::user()->pegawai_id;
       $set->keterangan = $request->keterangan;
       $set->update();

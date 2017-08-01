@@ -43,12 +43,12 @@
             <tr>
               <td>Jam Kerja</td>
               <td>:</td>
-              <td><select class="form-control" name="jam_kerja_id">
-                @foreach ($getJamKerja as $key)
-                @if ($getShift->jam_kerja_id == $key->id)
-                <option value="{{ $key->id }}" selected="">{{ $key->nama_jam_kerja}} - {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+              <td><select class="form-control" name="jadwal_kerja_shift_id">
+                @foreach ($getJadwalKerjaShift as $key)
+                @if ($getShift->jadwal_kerja_shift_id == $key->id)
+                <option value="{{ $key->id }}" selected="">{{ $key->nama_group}}</option>
                 @else
-                <option value="{{ $key->id }}">{{ $key->nama_jam_kerja}} - {{ $key->jam_masuk}} s/d {{ $key->jam_pulang}}</option>
+                <option value="{{ $key->id }}">{{ $key->nama_group}}</option>
                 @endif
                 @endforeach
                 <option value=""></option>

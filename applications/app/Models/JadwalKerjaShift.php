@@ -8,7 +8,7 @@ class JadwalKerjaShift extends Model
 {
     protected $table = 'preson_jadwal_kerja_shift';
 
-    protected $fillable = ['nama_group','jadwal1','jadwal2','jadwal3','jadwal4','jadwal5','flag_status'];
+    protected $fillable = ['skpd_id','nama_group','jadwal1','jadwal2','jadwal3','jadwal4','jadwal5','flag_status'];
 
     public function jadwal_1()
     {
