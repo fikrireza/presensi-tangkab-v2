@@ -216,6 +216,11 @@ Route::post('jadwal-shift/tambah', 'ShiftController@jadwalShiftTanggalStore')->n
 Route::get('jadwal-shift/ubah/{id}', 'ShiftController@jadwalShiftUbah')->name('shift.jadwalUbah');
 Route::post('jadwal-shift/ubah', 'ShiftController@jadwalShiftEdit')->name('shift.jadwalEdit');
 
+// Shift Upload Massal
+Route::get('shift-upload', 'ShiftController@getUpload')->name('shift.getUpload');
+Route::post('shift-getTemplate/', 'ShiftController@getTemplate')->name('shift.getTemplate');
+Route::post('shift-postTemplate/', 'ShiftController@postTemplate')->name('shift.postTemplate');
+
 
 
 

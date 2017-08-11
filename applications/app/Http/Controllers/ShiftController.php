@@ -9,11 +9,13 @@ use App\Models\Skpd;
 use App\Models\Shift;
 use App\Models\JamKerja;
 use App\Models\JadwalKerja;
-use App\Models\JamKerjaGroup;
+use App\Models\JadwalKerjaShift;
 
 use Validator;
 use Auth;
 use DB;
+use Excel;
+use Illuminate\Support\Facades\Input;
 
 class ShiftController extends Controller
 {
@@ -203,5 +205,143 @@ class ShiftController extends Controller
 
       return redirect()->route('shift.jadwaltanggal', ['tanggal' => $tanggal])->with('berhasil', 'Jadwal Pegawai '.$request->nama_pegawai.' Berhasil Dirubah');
     }
+
+    public function getUpload()
+    {
+
+        return view('pages.shift.uploadShift');
+    }
+
+    public function getTemplate(Request $request)
+    {
+      $bulan = $request->bulan_shift;
+
+      $start_date = "01-".$bulan;
+      $start_time = strtotime($start_date);
+
+      $end_time = strtotime("+1 month", $start_time);
+
+      for($i=$start_time; $i<$end_time; $i+=86400)
+      {
+        $tanggalBulan[] = date('d-m-Y', $i);
+      }
+
+      $getPegawai = Pegawai::select('fid', 'nip_sapk', 'nama')
+                            ->where('status', 1)
+                            ->where('skpd_id', Auth::user()->skpd_id)
+                            ->get()
+                            ->toArray();
+
+      $getJadwalKerjaShift = JadwalKerjaShift::select('id', 'nama_group')
+                                              ->where('skpd_id', Auth::user()->skpd_id)
+                                              ->where('flag_status', 1)
+                                              ->get()
+                                              ->toArray();
+
+
+      return Excel::create('Shift - '.$bulan, function($excel) use($tanggalBulan, $getPegawai, $getJadwalKerjaShift){
+        foreach ($tanggalBulan as $tanggal) {
+          $excel->sheet($tanggal, function($sheet) use ($tanggalBulan)
+          {
+            $sheet->row(1, array('FID', 'Jadwal Kerja'));
+            $sheet->cell('A1:B1', function($cell){
+              $cell->setFontSize(12);
+              $cell->setFontWeight('bold');
+              $cell->setAlignment('center');
+              $cell->setValignment('center');
+            });
+            $sheet->setColumnFormat(array(
+                                      'A' => '0',
+                                      'B' => '0',
+                                  ));
+            $sheet->setAllBorders('thin');
+            $sheet->setFreeze('A1');
+          });
+        }
+        $excel->sheet('List Pegawai', function($sheet) use ($getPegawai)
+        {
+          $sheet->fromArray($getPegawai, null, 'A3', true);
+          $sheet->mergeCells('A1:C2');
+          $sheet->row(1, array('List Pegawai SKPD'));
+          $sheet->row(3, array('FID','NIP','Nama'));
+          $sheet->cell('A1:C2', function($cell){
+            $cell->setFontSize(12);
+            $cell->setFontWeight('bold');
+            $cell->setAlignment('center');
+            $cell->setValignment('center');
+          });
+          $sheet->setAutoFilter('A3:C3');
+          $sheet->setAllBorders('thin');
+          $sheet->setFreeze('A4');
+        });
+        $excel->sheet('Jadwal Shift', function($sheet) use ($getJadwalKerjaShift)
+        {
+          $sheet->fromArray($getJadwalKerjaShift, null, 'A3', true);
+          $sheet->mergeCells('A1:B2');
+          $sheet->row(1, array('List Jadwal Shift'));
+          $sheet->row(3, array('ID','Nama Jadwal Shift'));
+          $sheet->cell('A1:B2', function($cell){
+            $cell->setFontSize(12);
+            $cell->setFontWeight('bold');
+            $cell->setAlignment('center');
+            $cell->setValignment('center');
+          });
+          $sheet->setAllBorders('thin');
+          $sheet->setFreeze('A4');
+        });
+
+      })->download('xlsx');
+
+
+    }
+
+    public function postTemplate(Request $request)
+    {
+        if(Input::hasFile('postTemplate'))
+        {
+    			$path = Input::file('postTemplate')->getRealPath();
+
+          $bulan = $request->upload_bulan_shift;
+
+          $start_date = "01-".$bulan;
+          $start_time = strtotime($start_date);
+
+          $end_time = strtotime("+1 month", $start_time);
+
+          for($i=$start_time; $i<$end_time; $i+=86400)
+          {
+            $tanggalBulan[] = date('d-m-Y', $i);
+          }
+
+
+          foreach ($tanggalBulan as $tanggal)
+          {
+            $data = Excel::selectSheets($tanggal)->load($path)->get();
+            if(!empty($data) && $data->count())
+            {
+              foreach ($data as $key)
+              {
+                  $formatTanggal = explode('-', $tanggal);
+                  $susunTanggal = $formatTanggal[2].'-'.$formatTanggal[1].'-'.$formatTanggal[0];
+
+                  $save = new Shift;
+                  $save->fid = $key->fid;
+                  $save->tanggal = $susunTanggal;
+                  $save->jadwal_kerja_shift_id = (int)$key->jadwal_kerja;
+                  $save->keterangan = 'Upload System Excel';
+                  $save->actor  = Auth::user()->pegawai_id;
+                  $save->save();
+              }
+            }else{
+              return back()->with('error', 'Harap Pilih File Sesuai Dengan Template Atau Beberapa Data Telah Disimpan');
+            }
+          }
+
+          return redirect()->route('shift.jadwal')->with('message', 'Berhasil Import Jadwal Shift '.$bulan);
+
+    		}
+
+    }
+
 
 }

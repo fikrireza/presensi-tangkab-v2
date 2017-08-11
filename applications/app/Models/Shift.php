@@ -8,7 +8,7 @@ class Shift extends Model
 {
     protected $table = 'preson_shift_log';
 
-    protected $fillable = ['fid', 'tanggal', 'jam_kerja_id', 'keterangan'];
+    protected $fillable = ['fid', 'tanggal', 'jadwal_kerja_shift_id', 'keterangan'];
 
     public function shift()
     {

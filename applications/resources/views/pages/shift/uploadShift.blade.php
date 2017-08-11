@@ -1,18 +1,21 @@
 @extends('layout.master')
 
 @section('title')
-  <title>Jadwal Shift | Presensi Online</title>
+  <title>Jadwal Shift Uplaod | Presensi Online</title>
 @endsection
 
 @section('breadcrumb')
-  <h1>Jadwal Shift</h1>
+  <h1>Upload Jadwal Shift</h1>
   <ol class="breadcrumb">
     <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
-    <li class="active">Jadwal Shift</li>
+    <li><a href="{{ route('shift.jadwal')}}">Jadwal Shift</a></li>
+    <li class="active">Upload Jadwal Shift</li>
   </ol>
 @endsection
 
 @section('content')
+
+@if(Session::has('berhasil'))
 <script>
   window.setTimeout(function() {
     $(".alert-success").fadeTo(500, 0).slideUp(500, function(){
@@ -21,7 +24,6 @@
   }, 2000);
 </script>
 
-@if(Session::has('berhasil'))
 <div class="row">
   <div class="col-md-12">
     <div class="alert alert-success">
@@ -34,39 +36,56 @@
 @endif
 
 <div class="row">
-  <div class="col-md-6 col-md-offset-3">
+  <div class="col-md-6">
     <div class="box box-primary box-solid">
       <div class="box-header with-border">
         <div class="box-title">
           <p>Pilih Bulan</p>
         </div>
       </div>
-      <form action="{{ route('shift.jadwalBulan')}}" method="POST">
+      <form action="{{ route('shift.getTemplate')}}" method="POST">
       {{ csrf_field() }}
       <div class="box-body">
-        @if(isset($pilihBulan))
-        <div class="row">
-          <div class="col-xs-12">
-            <input type="text" class="form-control" name="bulan_shift" id="bulan_shift" value="{{ $pilihBulan }}" placeholder="mm-yyyy" required="">
-          </div>
-        </div>
-        @else
         <div class="row">
           <div class="col-xs-12">
             <input type="text" class="form-control" name="bulan_shift" id="bulan_shift" value="" placeholder="mm-yyyy" required="">
           </div>
         </div>
-        @endif
       </div>
       <div class="box-footer">
-        <button class="btn btn-block bg-purple">Pilih</button>
+        <button class="btn btn-block bg-purple">Download Template</button>
+      </div>
+      </form>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="box box-primary box-solid">
+      <div class="box-header with-border">
+        <div class="box-title">
+          <p>Upload Jadwal</p>
+        </div>
+      </div>
+      <form action="{{ route('shift.postTemplate')}}" method="POST" enctype="multipart/form-data">
+      {{ csrf_field() }}
+      <div class="box-body">
+        <div class="row">
+          <div class="col-xs-5">
+            <input type="text" class="form-control" name="upload_bulan_shift" id="upload_bulan_shift" value="" placeholder="mm-yyyy" required="">
+          </div>
+          <div class="col-xs-7">
+            <input type="file" class="form-control" name="postTemplate"  value="" required="" accept=".xlsx">
+          </div>
+        </div>
+      </div>
+      <div class="box-footer">
+        <button class="btn btn-block bg-purple">Upload Jadwal</button>
       </div>
       </form>
     </div>
   </div>
 </div>
 
-<div class="row">
+{{-- <div class="row">
   <div class="col-md-12">
     <div class="box box-primary box-solid">
       <div class="box-header">
@@ -90,21 +109,19 @@
             </tr>
           </tfoot>
           <tbody>
-            <?php $no = 1; ?>
             @foreach ($tanggalBulan as $key)
             <tr>
               <td>{{ $no }}</td>
               <td>{{ $key }}</td>
               <td><a href="{{ url('jadwal-shift').'/'.$key }}"><i class="fa fa-edit"></i> Lihat</a></td>
             </tr>
-            <?php $no++; ?>
             @endforeach
           </tbody>
         </table>
       </div>
     </div>
   </div>
-</div>
+</div> --}}
 
 
 @endsection
@@ -115,6 +132,18 @@
     $("#table_hari").DataTable();
   });
   $('#bulan_shift').datepicker({
+    autoclose: true,
+    viewMode: 'years',
+    format: 'mm/yyyy',
+    changeMonth: true,
+    changeYear: true,
+    showButtonPanel: true,
+    format: "mm-yyyy",
+    viewMode: "months",
+    minViewMode: "months"
+  });
+
+  $('#upload_bulan_shift').datepicker({
     autoclose: true,
     viewMode: 'years',
     format: 'mm/yyyy',
